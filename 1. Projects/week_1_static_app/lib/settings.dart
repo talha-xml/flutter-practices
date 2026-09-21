@@ -14,7 +14,10 @@ class SettingScreen extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 20),
-          Text("Here you can change your app settings"),
+          Text(
+            "Here you can change your app settings",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           const SizedBox(height: 20),
           Expanded(
             child: ListView(
@@ -25,7 +28,12 @@ class SettingScreen extends StatelessWidget {
                 ListTile(
                   title: Text("Change Language: English, Arabic, Japanese"),
                 ),
-                ListTile(title: Text("View Privacy Settings")),
+                ListTile(
+                  title: Text(
+                    "View Privacy Policy",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),

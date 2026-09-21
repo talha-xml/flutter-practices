@@ -14,7 +14,10 @@ class DetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           const SizedBox(height: 20),
-          Text("My Details"),
+          Text(
+            "My Details",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
           const SizedBox(height: 20),
           Expanded(
             child: ListView(
@@ -30,7 +33,10 @@ class DetailsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  title: Text("Contact me at: mtalhafaizan30@gmail.com"),
+                  title: Text(
+                    "Contact me at: mtalhafaizan30@gmail.com",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
