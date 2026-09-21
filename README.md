@@ -22,15 +22,6 @@
   practice sessions and projects.
 </p>
 
-<pre>
-flutter-practices/
-│
-├── Dart/
-├── Flutter/
-├── Small Projects/
-└── README.md
-</pre>
-
 <h2>How I Manage It</h2>
 
 <ul>
