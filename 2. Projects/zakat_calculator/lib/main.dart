@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'registration.dart';
+import 'screens/registration.dart';
 
 void main() {
   runApp(

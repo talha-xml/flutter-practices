@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../models/user.dart';
+import '../services/auth_service.dart';
+import '../utils/validators.dart';
 import 'login.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -14,20 +17,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  String? name;
-  String? email;
-  String? password;
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          "Registration Screen",
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text("Zakaat Calculator", style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -63,11 +60,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       decoration: InputDecoration(labelText: "Email"),
                       controller: _emailController,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return "Email is required";
                         }
-                        if (!value.contains("@")) {
-                          return "Where is @?";
+                        if (!emailRegex.hasMatch(value.trim())) {
+                          return "Please enter a valid email";
                         }
                         return null;
                       },
@@ -103,20 +100,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     SizedBox(height: 50),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          name = _nameController.text;
-                          email = _emailController.text;
-                          password = _passwordController.text;
+                          final user = User(
+                            name: _nameController.text.trim(),
+                            email: _emailController.text.trim(),
+                          );
 
-                          Navigator.push(
+                          await _authService.registerUser(
+                            user: user,
+                            password: _passwordController.text,
+                          );
+
+                          if (!context.mounted) return;
+
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginScreen(
-                                name: name!,
-                                email: email!,
-                                password: password!,
-                              ),
+                              builder: (context) => LoginScreen(),
                             ),
                           );
                         }

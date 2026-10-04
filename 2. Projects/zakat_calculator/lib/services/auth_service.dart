@@ -12,8 +12,13 @@ class AuthService {
   }) async {
     final salt = PasswordHasher.generateSalt();
     final passwordHash = PasswordHasher.hashPassword(password, salt);
+
     await _secureStorage.write(key: 'user_name', value: user.name);
-    await _secureStorage.write(key: 'user_email', value: user.email);
+    await _secureStorage.write(
+      key: 'user_email',
+      value: user.email.toLowerCase().trim(),
+    );
+
     await _secureStorage.write(key: 'password_salt', value: salt);
     await _secureStorage.write(key: 'password_hash', value: passwordHash);
   }
@@ -25,10 +30,12 @@ class AuthService {
     final savedEmail = await _secureStorage.read(key: 'user_email');
     final savedSalt = await _secureStorage.read(key: 'password_salt');
     final savedHash = await _secureStorage.read(key: 'password_hash');
+
     if (savedEmail == null || savedSalt == null || savedHash == null) {
       return null;
     }
-    if (email != savedEmail) {
+
+    if (email.toLowerCase().trim() != savedEmail) {
       return null;
     }
 
@@ -38,8 +45,17 @@ class AuthService {
       return null;
     }
 
+    await _secureStorage.write(key: 'logged_in', value: 'true');
     final savedName = await _secureStorage.read(key: 'user_name');
-
     return User(name: savedName ?? '', email: savedEmail);
+  }
+
+  Future<bool> isLoggedIn() async {
+    final loggedIn = await _secureStorage.read(key: 'logged_in');
+    return loggedIn == 'true';
+  }
+
+  Future<void> logout() async {
+    await _secureStorage.delete(key: 'logged_in');
   }
 }

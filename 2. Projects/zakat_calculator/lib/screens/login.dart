@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../services/auth_service.dart';
+import '../utils/validators.dart';
+import 'asset_entry.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _authService = AuthService();
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  final String? name;
-  final String? email;
-  final String? password;
-
-  LoginScreen({super.key, this.name, this.email, this.password});
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,29 +42,61 @@ class LoginScreen extends StatelessWidget {
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(border: Border.all()),
               child: Form(
+                key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
                       decoration: InputDecoration(labelText: "Email"),
                       controller: _emailController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Email is required";
+                        }
+
+                        if (!emailRegex.hasMatch(value.trim())) {
+                          return "Please enter a valid email";
+                        }
+
+                        return null;
+                      },
                     ),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(labelText: "Password"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password is required";
+                        }
+
+                        return null;
+                      },
                     ),
                     SizedBox(height: 50),
                     ElevatedButton(
-                      onPressed: () {
-                        if (_emailController.text == email &&
-                            _passwordController.text == password) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Authentication verified")),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          final user = await _authService.loginUser(
+                            email: _emailController.text,
+                            password: _passwordController.text,
                           );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Wrong password or email")),
-                          );
+
+                          if (!context.mounted) return;
+
+                          if (user != null) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AssetEntryScreen(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Wrong password or email"),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: Text("Login"),
@@ -65,7 +105,6 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -90,5 +129,12 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
