@@ -23,99 +23,102 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text("Login Screen", style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Login Screen',
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 50),
-            Center(
+            const SizedBox(height: 50),
+            const Center(
               child: Text(
-                "Login to continue",
+                'Login to continue',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             Container(
               width: 350,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(border: Border.all()),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     TextFormField(
-                      decoration: InputDecoration(labelText: "Email"),
+                      decoration: const InputDecoration(labelText: 'Email'),
                       controller: _emailController,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Email is required";
+                          return 'Email is required';
                         }
-
                         if (!emailRegex.hasMatch(value.trim())) {
-                          return "Please enter a valid email";
+                          return 'Please enter a valid email';
                         }
-
                         return null;
                       },
                     ),
                     TextFormField(
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(labelText: "Password"),
+                      decoration: const InputDecoration(labelText: 'Password'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Password is required";
+                          return 'Password is required';
                         }
-
                         return null;
                       },
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     ElevatedButton(
                       onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          final user = await _authService.loginUser(
-                            email: _emailController.text,
-                            password: _passwordController.text,
+                        if (!_formKey.currentState!.validate()) {
+                          return;
+                        }
+
+                        final user = await _authService.loginUser(
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text,
+                        );
+
+                        if (!context.mounted) return;
+
+                        if (user != null) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AssetEntryScreen(user: user),
+                            ),
                           );
-
-                          if (!context.mounted) return;
-
-                          if (user != null) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AssetEntryScreen(),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Wrong password or email"),
-                              ),
-                            );
-                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Wrong password or email'),
+                            ),
+                          );
                         }
                       },
-                      child: Text("Login"),
+                      child: const Text('Login'),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Don't have an account? "),
+                const Text("Don't have an account? "),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(
-                    "Register",
+                  child: const Text(
+                    'Register',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
