@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/user.dart';
 import '../models/zakat_input.dart';
 import '../models/zakat_settings.dart';
 import '../services/auth_service.dart';
 import '../services/zakat_calculator.dart';
 import '../services/history_storage.dart';
-
 import 'registration.dart';
 import 'result.dart';
 import 'settings.dart';
@@ -35,18 +33,14 @@ class _AssetEntryScreenState extends State<AssetEntryScreen> {
   final _goodReceivableController = TextEditingController();
   final _doubtfulReceivableController = TextEditingController();
   final _debtController = TextEditingController();
-
   final _goldWeightController = TextEditingController();
   final _goldPurityController = TextEditingController();
   final _goldPriceController = TextEditingController();
-
   final _personalGoldJewelleryWeightController = TextEditingController();
   final _personalGoldJewelleryPurityController = TextEditingController();
-
   final _silverWeightController = TextEditingController();
   final _silverPurityController = TextEditingController();
   final _silverPriceController = TextEditingController();
-
   final _personalSilverJewelleryWeightController = TextEditingController();
   final _personalSilverJewelleryPurityController = TextEditingController();
 
