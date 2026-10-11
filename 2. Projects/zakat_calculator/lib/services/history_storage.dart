@@ -44,15 +44,9 @@ class HistoryStorage {
   Future<List<Map<String, dynamic>>> getHistory(String userId) async {
     final box = await Hive.openBox(_boxName);
 
-    final records = box.values
+    return box.values
         .where((record) => record['userId'] == userId)
         .map((record) => Map<String, dynamic>.from(record as Map))
         .toList();
-
-    records.sort(
-      (a, b) => (b['date'] as String).compareTo(a['date'] as String),
-    );
-
-    return records;
   }
 }

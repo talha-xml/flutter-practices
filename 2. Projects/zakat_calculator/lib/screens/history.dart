@@ -56,20 +56,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  String _formatDate(String value) {
-    final date = DateTime.tryParse(value);
-
-    if (date == null) return value;
-
-    final localDate = date.toLocal();
-
-    return '${localDate.day.toString().padLeft(2, '0')}/'
-        '${localDate.month.toString().padLeft(2, '0')}/'
-        '${localDate.year}  '
-        '${localDate.hour.toString().padLeft(2, '0')}:'
-        '${localDate.minute.toString().padLeft(2, '0')}';
-  }
-
   Future<void> _refreshHistory() async {
     setState(_loadHistory);
     await _historyFuture;
@@ -152,10 +138,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ),
                     title: Text('Zakat: PKR $amount'),
                     subtitle: Text(
-                      '${_formatDate(record['date'] as String)}\n'
-                      '${zakatDue ? 'Zakat is due' : 'Zakat is not due'}',
+                      zakatDue ? 'Zakat is due' : 'Zakat is not due',
                     ),
-                    isThreeLine: true,
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => _openResult(record),
                   ),
