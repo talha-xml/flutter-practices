@@ -1,5 +1,4 @@
 import 'package:decimal/decimal.dart';
-
 import '../models/zakat_input.dart';
 import '../models/zakat_settings.dart';
 import '../models/zakat_result.dart';
@@ -7,9 +6,7 @@ import '../models/zakat_result.dart';
 class ZakatCalculator {
   static Decimal calculateGoldValue(ZakatInput input, ZakatSettings settings) {
     final fineGoldWeight = input.goldWeight * (input.goldPurity / 24);
-
     final fineGoldWeightDecimal = Decimal.parse(fineGoldWeight.toString());
-
     return fineGoldWeightDecimal * input.goldPrice;
   }
 
@@ -26,7 +23,6 @@ class ZakatCalculator {
         (input.personalGoldJewelleryPurity / 24);
 
     final fineGoldWeightDecimal = Decimal.parse(fineGoldWeight.toString());
-
     return fineGoldWeightDecimal * input.goldPrice;
   }
 
@@ -35,9 +31,7 @@ class ZakatCalculator {
     ZakatSettings settings,
   ) {
     final fineSilverWeight = input.silverWeight * (input.silverPurity / 24);
-
     final fineSilverWeightDecimal = Decimal.parse(fineSilverWeight.toString());
-
     return fineSilverWeightDecimal * input.silverPrice;
   }
 
@@ -54,7 +48,6 @@ class ZakatCalculator {
         (input.personalSilverJewelleryPurity / 24);
 
     final fineSilverWeightDecimal = Decimal.parse(fineSilverWeight.toString());
-
     return fineSilverWeightDecimal * input.silverPrice;
   }
 
@@ -63,14 +56,12 @@ class ZakatCalculator {
     ZakatSettings settings,
   ) {
     final goldValue = calculateGoldValue(input, settings);
-
     final personalGoldJewelleryValue = calculatePersonalGoldJewelleryValue(
       input,
       settings,
     );
 
     final silverValue = calculateSilverValue(input, settings);
-
     final personalSilverJewelleryValue = calculatePersonalSilverJewelleryValue(
       input,
       settings,
@@ -96,31 +87,25 @@ class ZakatCalculator {
 
   static Decimal calculateNetWealth(ZakatInput input, ZakatSettings settings) {
     final grossWealth = calculateGrossWealth(input, settings);
-
     final netWealth = grossWealth - input.debt;
-
     if (netWealth < Decimal.zero) {
       return Decimal.zero;
     }
-
     return netWealth;
   }
 
   static Decimal calculateNisab(ZakatInput input, ZakatSettings settings) {
     if (settings.nisabStandard == NisabStandard.silver) {
       final silverNisabWeight = Decimal.parse('612.36');
-
       return silverNisabWeight * input.silverPrice;
     }
 
     final goldNisabWeight = Decimal.parse('87.48');
-
     return goldNisabWeight * input.goldPrice;
   }
 
   static Decimal calculateZakat(ZakatInput input, ZakatSettings settings) {
     final netWealth = calculateNetWealth(input, settings);
-
     final nisab = calculateNisab(input, settings);
 
     if (netWealth >= nisab) {
@@ -132,14 +117,12 @@ class ZakatCalculator {
 
   static ZakatResult calculateResult(ZakatInput input, ZakatSettings settings) {
     final goldValue = calculateGoldValue(input, settings);
-
     final personalGoldJewelleryValue = calculatePersonalGoldJewelleryValue(
       input,
       settings,
     );
 
     final silverValue = calculateSilverValue(input, settings);
-
     final personalSilverJewelleryValue = calculatePersonalSilverJewelleryValue(
       input,
       settings,
