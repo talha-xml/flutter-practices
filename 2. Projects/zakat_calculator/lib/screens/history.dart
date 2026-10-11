@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:decimal/decimal.dart';
-
 import '../models/zakat_result.dart';
 import '../services/history_storage.dart';
 import 'result.dart';
