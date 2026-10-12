@@ -11,27 +11,20 @@ class HistoryStorage {
   }) async {
     final box = await Hive.openBox(_boxName);
 
-    final id = DateTime.now().microsecondsSinceEpoch.toString();
-
-    await box.put(id, {
-      'id': id,
+    await box.add({
       'userId': userId,
-      'date': DateTime.now().toIso8601String(),
-
       'cash': result.cash.toString(),
       'bankBalance': result.bankBalance.toString(),
       'investments': result.investments.toString(),
       'businessInventory': result.businessInventory.toString(),
       'goodReceivables': result.goodReceivables.toString(),
       'doubtfulReceivables': result.doubtfulReceivables.toString(),
-
       'goldValue': result.goldValue.toString(),
       'personalGoldJewelleryValue': result.personalGoldJewelleryValue
           .toString(),
       'silverValue': result.silverValue.toString(),
       'personalSilverJewelleryValue': result.personalSilverJewelleryValue
           .toString(),
-
       'grossWealth': result.grossWealth.toString(),
       'debt': result.debt.toString(),
       'netWealth': result.netWealth.toString(),
