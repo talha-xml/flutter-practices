@@ -5,12 +5,12 @@ void main() {
   print(profile_pic);
 }
 
-void main() {
-  String? nickname;
-  print(nickname ?? "No nickname");
-}
+// void main() {
+//   String? nickname;
+//   print(nickname ?? "No nickname");
+// }
 
-void main() {
-  int? score;
-  print(score ?? 0);
-}
+// void main() {
+//   int? score;
+//   print(score ?? 0);
+// }
