@@ -35,13 +35,13 @@ A Flutter-based Android application that calculates monetary Zakat based on a us
 
 ## Technology Stack
 
-- **Flutter and Dart** — Android application development.
-- **Hive** — local user records and calculation history.
-- **shared_preferences** — lightweight preferences and login session data.
-- **flutter_secure_storage** — storage of password salts and password hashes.
-- **crypto** — password hashing.
-- **decimal** — precise monetary calculations.
-- **uuid** — unique user identifiers.
+- **Flutter and Dart** - Android application development.
+- **Hive** - local user records and calculation history.
+- **shared_preferences** - lightweight preferences and login session data.
+- **flutter_secure_storage** - storage of password salts and password hashes.
+- **crypto** - password hashing.
+- **decimal** - precise monetary calculations.
+- **uuid** - unique user identifiers.
 
 ## Target Platform
 
