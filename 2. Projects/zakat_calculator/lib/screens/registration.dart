@@ -85,14 +85,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(labelText: 'Password'),
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        errorMaxLines: 3,
+                      ),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter Password';
                         }
-                        if (value.length < 8) {
-                          return 'Password must be at least 8 characters long';
+                        if (!passwordRegex.hasMatch(value)) {
+                          return 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
                         }
                         return null;
                       },
