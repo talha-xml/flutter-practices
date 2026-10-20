@@ -47,7 +47,7 @@ A Flutter-based Android application that calculates monetary Zakat based on a us
 
 ## Target Platform
 
-- Android
+- Android (for now)
 
 ## Requirements
 
