@@ -2,14 +2,55 @@ import 'package:flutter/material.dart';
 
 import '../models/zakat_settings.dart';
 import '../models/zakat_result.dart';
+import '../services/pdf_export_service.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends StatefulWidget {
   final ZakatResult result;
 
   const ResultScreen({super.key, required this.result});
 
   @override
+  State<ResultScreen> createState() => _ResultScreenState();
+}
+
+class _ResultScreenState extends State<ResultScreen> {
+  bool _isExporting = false;
+
+  Future<void> _exportPdf() async {
+    setState(() => _isExporting = true);
+
+    try {
+      final path = await PdfExportService.generateAndSavePdf(widget.result);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('PDF saved successfully to:\n$path'),
+          backgroundColor: Colors.teal,
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to export PDF: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isExporting = false);
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final result = widget.result;
+
     return Scaffold(
       appBar: AppBar(title: const Text("Zakat Result")),
       body: SingleChildScrollView(
@@ -73,6 +114,33 @@ class ResultScreen extends StatelessWidget {
             Text("Zakat Due: ${result.zakatDue ? "Yes" : "No"}"),
             Text("Zakat Rate: 2.5%"),
             Text("Zakat Amount: ${result.zakatAmount}"),
+
+            const SizedBox(height: 30),
+
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: _isExporting ? null : _exportPdf,
+                icon: _isExporting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.picture_as_pdf),
+                label: Text(_isExporting ? "Exporting..." : "Export PDF"),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
           ],
         ),
       ),
