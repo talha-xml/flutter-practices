@@ -42,6 +42,8 @@ A Flutter-based Android application that calculates monetary Zakat based on a us
 - **crypto** - password hashing.
 - **decimal** - precise monetary calculations.
 - **uuid** - unique user identifiers.
+- **pdf** - pdf file export
+- **path_provider** - communicates with device storage location
 
 ## Target Platform
 
