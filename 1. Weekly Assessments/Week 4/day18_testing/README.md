@@ -41,5 +41,3 @@ flutter test --update-goldens test/product_screen_golden_test.dart
 # Generate test coverage
 flutter test --coverage
 ```
-
-**Note:** `flutter run` is not required to execute these tests. The tests run in Flutter's testing environment.
