@@ -32,171 +32,219 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: primaryColor,
         title: const Text(
-          'Zakaat Calculator',
-          style: TextStyle(color: Colors.white),
+          'Zakat Calculator',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Column(
           children: [
-            const SizedBox(height: 50),
-            const Center(
-              child: Text(
-                'Create Your Account',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
+            const SizedBox(height: 16),
+            const Text(
+              'Create Your Account',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 50),
-            Container(
-              width: 350,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(border: Border.all()),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Name'),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Name is needed';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Email is required';
-                        }
-                        if (!emailRegex.hasMatch(value.trim())) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        errorMaxLines: 3,
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter Password';
-                        }
-                        if (!passwordRegex.hasMatch(value)) {
-                          return 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm Password',
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Confirm your password';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Password does not match';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 50),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (!_formKey.currentState!.validate()) {
-                          return;
-                        }
-
-                        final user = User(
-                          id: _uuid.v4(),
-                          name: _nameController.text.trim(),
-                          email: _emailController.text.trim().toLowerCase(),
-                        );
-
-                        try {
-                          final registered = await _authService.registerUser(
-                            user: user,
-                            password: _passwordController.text,
-                          );
-
-                          if (!context.mounted) return;
-
-                          if (!registered) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'An account with this email already exists.',
-                                ),
-                              ),
-                            );
-                            return;
+            const SizedBox(height: 8),
+            Text(
+              'Sign up to track and calculate your Zakat',
+              style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 24),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(22),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          labelText: 'Full Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Name is needed';
                           }
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Account created successfully. Please log in.',
-                              ),
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email Address',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Email is required';
+                          }
+                          if (!emailRegex.hasMatch(value.trim())) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          errorMaxLines: 3,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter Password';
+                          }
+                          if (!passwordRegex.hasMatch(value)) {
+                            return 'Password must be at least 8 characters with uppercase, lowercase, number, and special character';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Confirm your password';
+                          }
+                          if (value != _passwordController.text) {
+                            return 'Password does not match';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          );
+                          ),
+                          onPressed: () async {
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(),
-                            ),
-                          );
-                        } catch (error) {
-                          if (!context.mounted) return;
+                            final user = User(
+                              id: _uuid.v4(),
+                              name: _nameController.text.trim(),
+                              email: _emailController.text.trim().toLowerCase(),
+                            );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Could not create your account. Please try again.',
-                              ),
+                            try {
+                              final registered = await _authService.registerUser(
+                                user: user,
+                                password: _passwordController.text,
+                              );
+
+                              if (!context.mounted) return;
+
+                              if (!registered) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'An account with this email already exists.',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Account created successfully. Please log in.',
+                                  ),
+                                ),
+                              );
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                              );
+                            } catch (error) {
+                              if (!context.mounted) return;
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Could not create your account. Please try again.',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        }
-                      },
-                      child: const Text('Register'),
-                    ),
-                  ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            const SizedBox(height: 16),
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 const Text('Already have an account? '),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'Login',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                      color: Colors.blue,
+                      color: primaryColor,
                     ),
                   ),
                 ),

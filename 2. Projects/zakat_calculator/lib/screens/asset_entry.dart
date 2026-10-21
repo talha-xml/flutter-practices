@@ -238,7 +238,11 @@ class _AssetEntryScreenState extends State<AssetEntryScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        title: const Text('Asset Entry', style: TextStyle(color: Colors.white)),
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Asset Entry',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -267,98 +271,135 @@ class _AssetEntryScreenState extends State<AssetEntryScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
                 Text(
                   'Welcome, ${widget.user.name}',
-                  style: const TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 6),
                 const Text(
                   'Enter Your Assets',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 20),
 
-                _sectionTitle('Financial'),
-                _moneyField(_cashController, 'Cash (PKR)'),
-                _moneyField(_bankController, 'Bank Balance (PKR)'),
-                _moneyField(_investmentController, 'Investments (PKR)'),
-                _moneyField(_inventoryController, 'Business Inventory (PKR)'),
-                _moneyField(
-                  _goodReceivableController,
-                  'Good Receivables (PKR)',
-                ),
-                _moneyField(
-                  _doubtfulReceivableController,
-                  'Doubtful Receivables (PKR)',
-                ),
-                _moneyField(_debtController, 'Debts (PKR)'),
-
-                const SizedBox(height: 30),
-                _sectionTitle('Gold'),
-                _decimalField(_goldWeightController, 'Gold Weight (grams)'),
-                _decimalField(
-                  _goldPurityController,
-                  'Gold Purity (Karat)',
-                  validator: _validateGoldPurity,
-                ),
-                _decimalField(
-                  _goldPriceController,
-                  'Gold Price per gram (PKR)',
-                  validator: _validateGoldPrice,
+                _buildSectionCard(
+                  title: 'Financial Assets (PKR)',
+                  children: [
+                    _moneyField(_cashController, 'Cash'),
+                    _moneyField(_bankController, 'Bank Balance'),
+                    _moneyField(_investmentController, 'Investments'),
+                    _moneyField(_inventoryController, 'Business Inventory'),
+                    _moneyField(
+                      _goodReceivableController,
+                      'Good Receivables',
+                    ),
+                    _moneyField(
+                      _doubtfulReceivableController,
+                      'Doubtful Receivables',
+                    ),
+                    _moneyField(_debtController, 'Debts'),
+                  ],
                 ),
 
-                if (_zakatSettings.madhhab == Madhhab.hanafi) ...[
-                  const SizedBox(height: 20),
-                  _sectionTitle('Personal Gold Jewellery'),
-                  _decimalField(
-                    _personalGoldJewelleryWeightController,
-                    'Jewellery Weight (grams)',
+                _buildSectionCard(
+                  title: 'Gold',
+                  children: [
+                    _decimalField(_goldWeightController, 'Gold Weight (grams)'),
+                    _decimalField(
+                      _goldPurityController,
+                      'Gold Purity (Karat)',
+                      validator: _validateGoldPurity,
+                    ),
+                    _decimalField(
+                      _goldPriceController,
+                      'Gold Price per gram (PKR)',
+                      validator: _validateGoldPrice,
+                    ),
+                    if (_zakatSettings.madhhab == Madhhab.hanafi) ...[
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Personal Gold Jewellery',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _decimalField(
+                        _personalGoldJewelleryWeightController,
+                        'Jewellery Weight (grams)',
+                      ),
+                      _decimalField(
+                        _personalGoldJewelleryPurityController,
+                        'Jewellery Purity (Karat)',
+                        validator: _validateGoldPurity,
+                      ),
+                    ],
+                  ],
+                ),
+
+                _buildSectionCard(
+                  title: 'Silver',
+                  children: [
+                    _decimalField(_silverWeightController, 'Silver Weight (grams)'),
+                    _decimalField(
+                      _silverPurityController,
+                      'Silver Purity',
+                      validator: _validateSilverPurity,
+                    ),
+                    _decimalField(
+                      _silverPriceController,
+                      'Silver Price per gram (PKR)',
+                      validator: _validateSilverPrice,
+                    ),
+                    if (_zakatSettings.madhhab == Madhhab.hanafi) ...[
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Personal Silver Jewellery',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _decimalField(
+                        _personalSilverJewelleryWeightController,
+                        'Jewellery Weight (grams)',
+                      ),
+                      _decimalField(
+                        _personalSilverJewelleryPurityController,
+                        'Jewellery Purity',
+                        validator: _validateSilverPurity,
+                      ),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: _continueToResult,
+                    child: const Text(
+                      'Calculate Zakat',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  _decimalField(
-                    _personalGoldJewelleryPurityController,
-                    'Jewellery Purity (Karat)',
-                    validator: _validateGoldPurity,
-                  ),
-                ],
-
-                const SizedBox(height: 30),
-                _sectionTitle('Silver'),
-                _decimalField(_silverWeightController, 'Silver Weight (grams)'),
-                _decimalField(
-                  _silverPurityController,
-                  'Silver Purity',
-                  validator: _validateSilverPurity,
                 ),
-                _decimalField(
-                  _silverPriceController,
-                  'Silver Price per gram (PKR)',
-                  validator: _validateSilverPrice,
-                ),
-
-                if (_zakatSettings.madhhab == Madhhab.hanafi) ...[
-                  const SizedBox(height: 20),
-                  _sectionTitle('Personal Silver Jewellery'),
-                  _decimalField(
-                    _personalSilverJewelleryWeightController,
-                    'Jewellery Weight (grams)',
-                  ),
-                  _decimalField(
-                    _personalSilverJewelleryPurityController,
-                    'Jewellery Purity',
-                    validator: _validateSilverPurity,
-                  ),
-                ],
-
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: _continueToResult,
-                  child: const Text('Continue'),
-                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -367,22 +408,45 @@ class _AssetEntryScreenState extends State<AssetEntryScreen> {
     );
   }
 
-  Widget _sectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  Widget _buildSectionCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Card(
+      elevation: 1.5,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 14),
+            ...children,
+          ],
+        ),
       ),
     );
   }
 
   Widget _moneyField(TextEditingController controller, String label) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(labelText: label),
-      validator: _validateAmount,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: InputDecoration(
+          labelText: label,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        validator: _validateAmount,
+      ),
     );
   }
 
@@ -391,11 +455,19 @@ class _AssetEntryScreenState extends State<AssetEntryScreen> {
     String label, {
     String? Function(String?)? validator,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(labelText: label),
-      validator: validator ?? _validateAmount,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: InputDecoration(
+          labelText: label,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        validator: validator ?? _validateAmount,
+      ),
     );
   }
 

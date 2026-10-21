@@ -12,8 +12,11 @@ Future<void> main() async {
 
   runApp(
     MaterialApp(
+      title: 'Zakat Calculator',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF10462F)),
+        useMaterial3: true,
       ),
       home: const SessionGate(),
     ),

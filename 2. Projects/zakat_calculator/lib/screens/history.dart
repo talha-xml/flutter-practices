@@ -72,8 +72,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Zakat History')),
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'Zakat History',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _historyFuture,
         builder: (context, snapshot) {
@@ -100,19 +110,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
           final records = snapshot.data ?? [];
 
           if (records.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.history, size: 50),
-                  SizedBox(height: 12),
-                  Text('No calculations yet', style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 8),
+                  Icon(Icons.history, size: 56, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'No calculations yet',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
                     child: Text(
                       'Your saved Zakat calculations will appear here.',
                       textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey[600]),
                     ),
                   ),
                 ],
@@ -123,7 +137,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           return RefreshIndicator(
             onRefresh: _refreshHistory,
             child: ListView.builder(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               itemCount: records.length,
               itemBuilder: (context, index) {
                 final record = records[index];
@@ -131,16 +145,43 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 final amount = _money(record, 'zakatAmount');
 
                 return Card(
+                  elevation: 1.5,
+                  margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: ListTile(
-                    leading: Icon(
-                      zakatDue ? Icons.check_circle : Icons.info_outline,
-                      color: zakatDue ? Colors.green : Colors.grey,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
                     ),
-                    title: Text('Zakat: PKR $amount'),
+                    leading: CircleAvatar(
+                      backgroundColor: zakatDue
+                          ? const Color(0xFFE8F5E9)
+                          : const Color(0xFFEEEEEE),
+                      child: Icon(
+                        zakatDue ? Icons.check_circle : Icons.info_outline,
+                        color: zakatDue ? Colors.green[700] : Colors.grey[600],
+                      ),
+                    ),
+                    title: Text(
+                      'Zakat: PKR $amount',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     subtitle: Text(
                       zakatDue ? 'Zakat is due' : 'Zakat is not due',
+                      style: TextStyle(
+                        color: zakatDue ? Colors.green[800] : Colors.grey[600],
+                        fontSize: 13,
+                      ),
                     ),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey,
+                    ),
                     onTap: () => _openResult(record),
                   ),
                 );

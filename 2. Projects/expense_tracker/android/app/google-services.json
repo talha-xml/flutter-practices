@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522166285438",
+    "project_id": "spendwise-cb9a6",
+    "storage_bucket": "spendwise-cb9a6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522166285438:android:1c0f956c3bb675fe22142f",
+        "android_client_info": {
+          "package_name": "com.example.expense_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWBUmJoC0qdZbpcsJLV-uTVLvhr_7fRpc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
