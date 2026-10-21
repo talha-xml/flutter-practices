@@ -55,13 +55,6 @@ As a result, I could not:
 
 These tasks remain pending until I have access to a registered developer account.
 
-## Important Notes
-
-- The app has been built successfully, but it has not been uploaded to Google Play.
-- The current application ID is `com.example.day19_release_app_icon_aab`. It should be changed to a unique application ID before the first Play Console upload.
-- The signing keystore and `android/key.properties` must be kept private and excluded from version control.
-- The AAB build and local Android testing are separate from publishing through Google Play.
-
 ## Conclusion
 
 I successfully practised app icons, splash screens, build flavors, release signing, and AAB generation in Flutter. The remaining work is to complete Google Play Console registration and practise uploading and testing the app through its Internal testing track.
