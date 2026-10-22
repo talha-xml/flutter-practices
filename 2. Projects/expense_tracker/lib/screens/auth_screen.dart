@@ -41,7 +41,6 @@ class _AuthScreenState extends State<AuthScreen> {
         final credential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
-        // Hash and salt password, then save in Firestore
         if (credential.user != null) {
           final salt = PasswordHasher.generateSalt();
           final passwordHash = PasswordHasher.hashPassword(password, salt);
