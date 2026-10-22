@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 class CurrencyService {
   final Dio _dio;
   static const String _baseUrl = 'https://api.frankfurter.dev/v1';
-  static const double _usdToPkr = 278.50; // Reference conversion rate for PKR
+  static const double _usdToPkr = 278.50;
 
   CurrencyService({Dio? dio})
       : _dio = dio ??
@@ -21,7 +21,6 @@ class CurrencyService {
     return upper;
   }
 
-  /// Convert between PKR, USD, and GBP (GDP)
   Future<double> convertCurrency({
     required double amount,
     required String from,
@@ -35,7 +34,6 @@ class CurrencyService {
     }
 
     try {
-      // 1. Direct Frankfurter API conversion between USD and GBP
       if ((fromCode == 'USD' || fromCode == 'GBP') &&
           (toCode == 'USD' || toCode == 'GBP')) {
         final response = await _dio.get(
@@ -55,8 +53,6 @@ class CurrencyService {
         }
       }
 
-      // 2. Conversion involving PKR:
-      // Calls Frankfurter API to get the live USD <-> GBP rate first
       if (fromCode == 'USD' && toCode == 'PKR') {
         return amount * _usdToPkr;
       }
@@ -66,7 +62,6 @@ class CurrencyService {
       }
 
       if (fromCode == 'GBP' && toCode == 'PKR') {
-        // Fetch 1 GBP in USD from Frankfurter
         final response = await _dio.get(
           '/latest',
           queryParameters: {'amount': 1, 'from': 'GBP', 'to': 'USD'},
@@ -76,7 +71,6 @@ class CurrencyService {
       }
 
       if (fromCode == 'PKR' && toCode == 'GBP') {
-        // Fetch 1 USD in GBP from Frankfurter
         final response = await _dio.get(
           '/latest',
           queryParameters: {'amount': 1, 'from': 'USD', 'to': 'GBP'},
