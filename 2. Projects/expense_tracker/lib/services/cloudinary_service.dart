@@ -2,18 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CloudinaryConfig {
-  // Replace these with your actual Cloudinary credentials
-  static String cloudName = 'demo'; // Replace with your Cloudinary cloud name
-  static String uploadPreset = 'spendwise_preset'; // Replace with your unsigned upload preset
+  static String cloudName = 'demo'; 
+  static String uploadPreset = 'spendwise_preset';
 }
 
 class CloudinaryService {
   final Dio _dio;
-
   CloudinaryService({Dio? dio}) : _dio = dio ?? Dio();
-
-  /// Uploads an image file to Cloudinary using an unsigned upload preset.
-  /// Returns the secure URL of the hosted image.
   Future<String> uploadImage(XFile imageFile) async {
     final cloudName = CloudinaryConfig.cloudName;
     final uploadPreset = CloudinaryConfig.uploadPreset;
@@ -44,8 +39,6 @@ class CloudinaryService {
         return secureUrl;
       }
     }
-
     throw Exception('Failed to upload image to Cloudinary: ${response.statusMessage}');
   }
 }
-
