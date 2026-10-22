@@ -10,7 +10,6 @@ import '../screens/currency_converter_screen.dart';
 import '../screens/expense_detail_screen.dart';
 import '../screens/expenses_screen.dart';
 
-// Listenable notifier for GoRouter refresh on auth changes
 class AuthNotifier extends ChangeNotifier {
   AuthNotifier() {
     FirebaseAuth.instance.authStateChanges().listen((_) {
