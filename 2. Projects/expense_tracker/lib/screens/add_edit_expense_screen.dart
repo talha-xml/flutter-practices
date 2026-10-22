@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../models/expense.dart';
 import '../providers/expense_provider.dart';
@@ -55,11 +56,67 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final file = await picker.pickImage(source: source, imageQuality: 80);
-    if (file != null) {
+    try {
+      if (source == ImageSource.camera) {
+        var status = await Permission.camera.status;
+        if (!status.isGranted) {
+          status = await Permission.camera.request();
+        }
+
+        if (!mounted) return;
+        if (!status.isGranted) {
+          if (status.isPermanentlyDenied) {
+            await _showPermissionSettingsDialog();
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Camera permission denied. You can choose a photo from the gallery.',
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      final picker = ImagePicker();
+      final file = await picker.pickImage(source: source, imageQuality: 80);
+      if (!mounted || file == null) return;
+
       setState(() => _selectedImage = file);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not select the photo. Try again.')),
+        );
+      }
     }
+  }
+
+  Future<void> _showPermissionSettingsDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Camera permission required'),
+        content: const Text(
+          'Allow camera access in app settings, or choose a photo from the gallery.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              openAppSettings();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _save() async {
