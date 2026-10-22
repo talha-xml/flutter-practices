@@ -6,7 +6,6 @@ import '../models/expense.dart';
 import '../services/cloudinary_service.dart';
 import '../services/currency_service.dart';
 
-// Services
 final cloudinaryServiceProvider = Provider<CloudinaryService>((ref) {
   return CloudinaryService();
 });
@@ -15,12 +14,10 @@ final currencyServiceProvider = Provider<CurrencyService>((ref) {
   return CurrencyService();
 });
 
-// Auth state
 final authStateProvider = StreamProvider<User?>((ref) {
   return FirebaseAuth.instance.authStateChanges();
 });
 
-// Firestore Expense Repository
 class ExpenseRepository {
   final FirebaseFirestore _firestore;
 
@@ -63,7 +60,6 @@ final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
   return ExpenseRepository();
 });
 
-// Stream of all expenses for the currently logged in user
 final expensesListProvider = StreamProvider<List<Expense>>((ref) {
   final authUser = ref.watch(authStateProvider).value;
   if (authUser == null) {
@@ -73,7 +69,6 @@ final expensesListProvider = StreamProvider<List<Expense>>((ref) {
   return repo.watchExpenses(authUser.uid);
 });
 
-// Single expense provider by id
 final singleExpenseProvider =
     FutureProvider.family<Expense?, String>((ref, expenseId) async {
   final authUser = ref.watch(authStateProvider).value;
@@ -81,4 +76,3 @@ final singleExpenseProvider =
   final repo = ref.watch(expenseRepositoryProvider);
   return repo.getExpense(authUser.uid, expenseId);
 });
-
