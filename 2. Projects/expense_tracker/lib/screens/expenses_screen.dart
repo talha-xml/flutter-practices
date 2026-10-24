@@ -11,7 +11,6 @@ class ExpensesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final expensesAsync = ref.watch(expensesListProvider);
-    final user = ref.watch(authStateProvider).value;
 
     return Scaffold(
       appBar: AppBar(
@@ -57,26 +56,12 @@ class ExpensesScreen extends ConsumerWidget {
                             subtitle: expense.description.isNotEmpty
                                 ? Text(expense.description)
                                 : null,
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('PKR ${expense.amount.toStringAsFixed(2)}'),
-                                PopupMenuButton<String>(
-                                  onSelected: (val) async {
-                                    if (val == 'edit') {
-                                      context.push('/edit/${expense.id}', extra: expense);
-                                    } else if (val == 'delete' && user != null) {
-                                      await ref
-                                          .read(expenseRepositoryProvider)
-                                          .deleteExpense(user.uid, expense.id);
-                                    }
-                                  },
-                                  itemBuilder: (_) => const [
-                                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                    PopupMenuItem(value: 'delete', child: Text('Delete')),
-                                  ],
-                                ),
-                              ],
+                            trailing: Text(
+                              'PKR ${expense.amount.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
                             ),
                             onTap: () => context.push('/detail/${expense.id}'),
                           );

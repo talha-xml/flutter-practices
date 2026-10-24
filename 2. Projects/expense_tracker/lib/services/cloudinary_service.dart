@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CloudinaryConfig {
-  static String cloudName = 'demo'; 
-  static String uploadPreset = 'spendwise_preset';
+  static String get cloudName => dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+  static String get uploadPreset =>
+      dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? '';
 }
 
 class CloudinaryService {
@@ -14,7 +16,9 @@ class CloudinaryService {
     final uploadPreset = CloudinaryConfig.uploadPreset;
 
     if (cloudName.isEmpty || cloudName == 'YOUR_CLOUD_NAME') {
-      throw Exception('Cloudinary Cloud Name is not configured in CloudinaryConfig.');
+      throw Exception(
+        'Cloudinary Cloud Name is not configured in CloudinaryConfig.',
+      );
     }
 
     final url = 'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
@@ -28,9 +32,7 @@ class CloudinaryService {
     final response = await _dio.post(
       url,
       data: formData,
-      options: Options(
-        headers: {'Content-Type': 'multipart/form-data'},
-      ),
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );
 
     if (response.statusCode == 200 && response.data != null) {
@@ -39,6 +41,8 @@ class CloudinaryService {
         return secureUrl;
       }
     }
-    throw Exception('Failed to upload image to Cloudinary: ${response.statusMessage}');
+    throw Exception(
+      'Failed to upload image to Cloudinary: ${response.statusMessage}',
+    );
   }
 }

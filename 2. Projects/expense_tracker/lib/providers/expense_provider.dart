@@ -37,6 +37,13 @@ class ExpenseRepository {
     });
   }
 
+  Stream<Expense?> watchExpense(String uid, String expenseId) {
+    return _userExpensesRef(uid).doc(expenseId).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return Expense.fromFirestore(doc);
+    });
+  }
+
   Future<Expense?> getExpense(String uid, String expenseId) async {
     final doc = await _userExpensesRef(uid).doc(expenseId).get();
     if (!doc.exists) return null;
@@ -48,7 +55,10 @@ class ExpenseRepository {
   }
 
   Future<void> updateExpense(String uid, Expense expense) async {
-    await _userExpensesRef(uid).doc(expense.id).update(expense.toFirestore());
+    await _userExpensesRef(uid).doc(expense.id).set(
+          expense.toFirestore(),
+          SetOptions(merge: true),
+        );
   }
 
   Future<void> deleteExpense(String uid, String expenseId) async {
@@ -70,9 +80,9 @@ final expensesListProvider = StreamProvider<List<Expense>>((ref) {
 });
 
 final singleExpenseProvider =
-    FutureProvider.family<Expense?, String>((ref, expenseId) async {
+    StreamProvider.family<Expense?, String>((ref, expenseId) {
   final authUser = ref.watch(authStateProvider).value;
-  if (authUser == null) return null;
+  if (authUser == null) return Stream.value(null);
   final repo = ref.watch(expenseRepositoryProvider);
-  return repo.getExpense(authUser.uid, expenseId);
+  return repo.watchExpense(authUser.uid, expenseId);
 });

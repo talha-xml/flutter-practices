@@ -2,10 +2,11 @@
 
 SpendWise is a simple mobile expense tracking app built with Flutter. It helps users log their daily spending, view their total expenses, convert amounts between currencies using real-time exchange rates, and attach receipt photos to their transactions.
 
+---
+
 ## What Has Been Done So Far
 
 1. **Authentication & Session Persistence (Firebase Auth)**
-
    - Email and password registration and login.
    - Strong password regex check (at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special symbol).
    - Email format regex validation.
@@ -13,7 +14,6 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
    - Automatic login session persistence (user stays logged in when reopening the app).
 
 2. **Navigation (`go_router`)**
-
    - Clean route hierarchy connecting all screens:
      - `/auth` ➔ Login & Register screen
      - `/` ➔ Main Expenses Dashboard
@@ -23,34 +23,37 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
    - Route guard that redirects logged-out users to `/auth` and logged-in users to `/`.
 
 3. **State Management (`flutter_riverpod`)**
-
    - Centralized app state using Riverpod providers.
-   - Real-time Firestore stream provider listening for live expense updates.
+   - Real-time Firestore stream providers for both the expense list and individual expense details.
 
 4. **Expense Management (Cloud Firestore)**
-
-   - Real-time list of all user expenses.
+   - Real-time list of all user expenses on the main dashboard.
    - Total spending summary banner.
    - Add new expenses (amount, category, description).
-   - Edit existing expenses.
-   - Delete expenses.
+   - Edit existing expenses with instant real-time sync.
+   - Delete expenses with a confirmation warning dialog to prevent accidental data loss.
 
 5. **List ➔ Detail Navigation**
+   - Tapping any expense opens the details screen displaying the amount, category, date, description, and attached receipt photo.
 
-   - Tapping any expense opens the details screen displaying the amount, category, date, description, and attached receipt.
+6. **Cloudinary Receipt Hosting (`dio` + `flutter_dotenv`)**
+   - Unsigned multipart photo upload to Cloudinary using `dio`.
+   - Credentials safely stored in an untracked `.env` file (`CLOUDINARY_CLOUD_NAME` and `CLOUDINARY_UPLOAD_PRESET`) kept out of source control.
+   - Automatic Firestore linkage: stores the hosted receipt `secure_url` with the expense document.
+   - Full support for adding, updating, or replacing receipts on both new and existing expenses.
 
-6. **Currency Converter (Frankfurter REST API via `dio`)**
-
+7. **Currency Converter (Frankfurter REST API via `dio`)**
    - Real-time exchange rate converter for **PKR**, **USD**, and **GBP**.
    - Makes live network requests to the free European Central Bank rates API (Frankfurter API).
 
-7. **Camera & Photo Selection**
-
+8. **Camera & Photo Selection**
    - Camera permission check using `permission_handler` before launching the camera.
    - Image picker support (`image_picker`) for taking photos or picking from the device gallery.
 
-8. **Unit Tests**
+9. **Unit Tests**
    - Logic tests in `test/password_hasher_test.dart` verifying the salt generator, SHA-256 hash output, and email/password regex validation.
+
+---
 
 ## How to Run the App (Cold Start)
 
@@ -63,38 +66,42 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
 ### Steps to Run
 
 1. **Clone or open the project folder:**
-
    ```bash
    cd "expense_tracker"
    ```
 
 2. **Install project dependencies:**
-
    ```bash
    flutter pub get
    ```
 
-3. **Configure Firebase:**
+3. **Configure Environment Variables (`.env`):**
+   Create a `.env` file in the project root directory and add your Cloudinary credentials:
+   ```env
+   CLOUDINARY_CLOUD_NAME=your_cloud_name_here
+   CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset_here
+   ```
 
+4. **Configure Firebase:**
    - Make sure your `firebase_options.dart` file is present in the `lib/` folder (generated via FlutterFire CLI: `flutterfire configure`), or place your `google-services.json` in `android/app/`.
 
-4. **Run the test suite:**
-
+5. **Run the test suite:**
    ```bash
    flutter test
    ```
 
-5. **Run the app on your device/emulator:**
+6. **Run the app on your device/emulator:**
    ```bash
    flutter run
    ```
+
+---
 
 ## What is Remaining
 
 According to the capstone requirements, here is what is left to complete:
 
-**Cloudinary Receipt Upload**
-**Push Notifications (FCM)**
-**Offline Cache Verification**
-**Additional Unit & Widget Tests**
-**Signed Android Release Build**
+- [ ] **Push Notifications (FCM)**: Integrate `firebase_messaging` to register device tokens and handle incoming push notifications.
+- [ ] **Offline Cache Verification**: Explicitly verify/configure offline caching for expenses or currency rates when no internet is available.
+- [ ] **Additional Unit & Widget Tests**: Add widget tests for the forms and model serialization tests for `Expense`.
+- [ ] **Signed Android Release Build**: Create a release keystore, configure `key.properties` and `build.gradle`, and generate a signed Android App Bundle (`flutter build appbundle`) for the Google Play Console internal test track.

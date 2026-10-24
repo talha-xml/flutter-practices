@@ -29,10 +29,33 @@ class ExpenseDetailScreen extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () async {
-                await ref
-                    .read(expenseRepositoryProvider)
-                    .deleteExpense(user.uid, expenseId);
-                if (context.mounted) context.pop();
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Delete Expense?'),
+                    content: const Text(
+                      'Are you sure you want to delete this expense? This action cannot be undone.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: TextButton.styleFrom(foregroundColor: Colors.red),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true && context.mounted) {
+                  await ref
+                      .read(expenseRepositoryProvider)
+                      .deleteExpense(user.uid, expenseId);
+                  if (context.mounted) context.pop();
+                }
               },
             ),
           ],

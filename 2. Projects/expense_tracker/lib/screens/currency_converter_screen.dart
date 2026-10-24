@@ -11,14 +11,25 @@ class CurrencyConverterScreen extends ConsumerStatefulWidget {
 }
 
 class _CurrencyConverterScreenState extends ConsumerState<CurrencyConverterScreen> {
-  final _amountController = TextEditingController(text: '100');
-  String _from = 'USD';
-  String _to = 'PKR';
+  late final TextEditingController _amountController;
+  String _from = 'PKR';
+  String _to = 'USD';
   double? _result;
   bool _loading = false;
   String? _error;
 
   final List<String> _currencies = ['PKR', 'USD', 'GBP'];
+
+  @override
+  void initState() {
+    super.initState();
+    final expenses = ref.read(expensesListProvider).value ?? [];
+    final totalSpending = expenses.fold<double>(0.0, (sum, item) => sum + item.amount);
+
+    _amountController = TextEditingController(
+      text: totalSpending > 0 ? totalSpending.toStringAsFixed(2) : '100',
+    );
+  }
 
   @override
   void dispose() {
