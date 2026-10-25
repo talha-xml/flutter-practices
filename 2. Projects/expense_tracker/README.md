@@ -26,9 +26,12 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
    - Centralized app state using Riverpod providers.
    - Real-time Firestore stream providers for both the expense list and individual expense details.
 
-4. **Expense Management (Cloud Firestore)**
+4. **Budget & Expense Management (Cloud Firestore)**
+   - Enter and persist a total spending budget (e.g., PKR 30,000) stored in Firestore under the user profile.
+   - Automatic deduction: any uploaded expense is subtracted in real time from the total budget, displaying the exact remaining balance.
+   - Over-budget warning if total spending exceeds the set budget.
+   - Option to edit/update the budget anytime from the dashboard.
    - Real-time list of all user expenses on the main dashboard.
-   - Total spending summary banner.
    - Add new expenses (amount, category, description).
    - Edit existing expenses with instant real-time sync.
    - Delete expenses with a confirmation warning dialog to prevent accidental data loss.
@@ -50,7 +53,12 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
    - Camera permission check using `permission_handler` before launching the camera.
    - Image picker support (`image_picker`) for taking photos or picking from the device gallery.
 
-9. **Unit Tests**
+9. **Push Notifications & 50% Budget Alert (`firebase_messaging` + `flutter_local_notifications`)**
+   - Separate `lib/notifications/` module managing FCM permissions, token synchronization to Firestore, and high-priority notification channels.
+   - Real-time budget threshold evaluation: automatically triggers a floating heads-up pop-up alert when spending crosses 50% of the allocated budget (e.g., spent 500 out of 1000) indicating the remaining balance.
+   - Background push notification handler registered for remote FCM messages.
+
+10. **Unit Tests**
    - Logic tests in `test/password_hasher_test.dart` verifying the salt generator, SHA-256 hash output, and email/password regex validation.
 
 ---
@@ -101,7 +109,6 @@ SpendWise is a simple mobile expense tracking app built with Flutter. It helps u
 
 According to the capstone requirements, here is what is left to complete:
 
-- [ ] **Push Notifications (FCM)**: Integrate `firebase_messaging` to register device tokens and handle incoming push notifications.
 - [ ] **Offline Cache Verification**: Explicitly verify/configure offline caching for expenses or currency rates when no internet is available.
 - [ ] **Additional Unit & Widget Tests**: Add widget tests for the forms and model serialization tests for `Expense`.
 - [ ] **Signed Android Release Build**: Create a release keystore, configure `key.properties` and `build.gradle`, and generate a signed Android App Bundle (`flutter build appbundle`) for the Google Play Console internal test track.

@@ -64,6 +64,23 @@ class ExpenseRepository {
   Future<void> deleteExpense(String uid, String expenseId) async {
     await _userExpensesRef(uid).doc(expenseId).delete();
   }
+
+  Stream<double?> watchBudget(String uid) {
+    return _firestore.collection('users').doc(uid).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      final data = doc.data();
+      if (data == null || !data.containsKey('budget')) return null;
+      final b = data['budget'];
+      if (b is num) return b.toDouble();
+      return double.tryParse(b?.toString() ?? '');
+    });
+  }
+
+  Future<void> setBudget(String uid, double budget) async {
+    await _firestore.collection('users').doc(uid).set({
+      'budget': budget,
+    }, SetOptions(merge: true));
+  }
 }
 
 final expenseRepositoryProvider = Provider<ExpenseRepository>((ref) {
@@ -85,4 +102,11 @@ final singleExpenseProvider =
   if (authUser == null) return Stream.value(null);
   final repo = ref.watch(expenseRepositoryProvider);
   return repo.watchExpense(authUser.uid, expenseId);
+});
+
+final userBudgetProvider = StreamProvider<double?>((ref) {
+  final authUser = ref.watch(authStateProvider).value;
+  if (authUser == null) return Stream.value(null);
+  final repo = ref.watch(expenseRepositoryProvider);
+  return repo.watchBudget(authUser.uid);
 });

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../notifications/notification_service.dart';
 import '../services/password_hasher.dart';
 
 final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
@@ -37,6 +38,7 @@ class _AuthScreenState extends State<AuthScreen> {
           email: email,
           password: password,
         );
+        await NotificationService().syncFCMToken();
       } else {
         final credential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
@@ -54,6 +56,8 @@ class _AuthScreenState extends State<AuthScreen> {
                 'passwordHash': passwordHash,
                 'createdAt': Timestamp.now(),
               }, SetOptions(merge: true));
+
+          await NotificationService().syncFCMToken();
         }
       }
     } on FirebaseAuthException catch (e) {

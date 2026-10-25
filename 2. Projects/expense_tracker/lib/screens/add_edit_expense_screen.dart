@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,7 +82,12 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
       }
 
       final picker = ImagePicker();
-      final file = await picker.pickImage(source: source, imageQuality: 80);
+      final file = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 75,
+      );
       if (!mounted || file == null) return;
 
       setState(() => _selectedImage = file);
@@ -120,9 +126,15 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
   }
 
   Future<void> _save() async {
+    FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
-    final user = ref.read(authStateProvider).value;
-    if (user == null) return;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in first.')),
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
     String? receiptUrl = _existingReceiptUrl;
@@ -169,6 +181,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
       appBar: AppBar(title: Text(isEditing ? 'Edit Expense' : 'Add Expense')),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(16),
           child: Form(
             key: _formKey,
@@ -178,6 +191,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 TextFormField(
                   controller: _amountController,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(labelText: 'Amount (PKR)'),
                   validator: (val) {
                     final num = double.tryParse(val ?? '');
@@ -188,6 +202,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _categoryController,
+                  textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(labelText: 'Category'),
                   validator: (val) =>
                       val == null || val.trim().isEmpty ? 'Enter category' : null,
@@ -195,6 +210,8 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _descriptionController,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _save(),
                   decoration: const InputDecoration(labelText: 'Description'),
                 ),
                 const SizedBox(height: 12),
@@ -236,16 +253,29 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                if (_isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  ElevatedButton(
-                    onPressed: _save,
-                    child: Text(isEditing ? 'Update' : 'Save'),
-                  ),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+            onPressed: _isLoading ? null : _save,
+            child: _isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    isEditing ? 'Update Expense' : 'Save Expense',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
           ),
         ),
       ),
